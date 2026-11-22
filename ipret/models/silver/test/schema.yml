@@ -88,7 +88,7 @@ models:
                 to: ref('dim_region')
                 field: id_dim_region
 
-  - name: dim_postal_code
+  - name: dim_code_postal
     columns:
       - name: id_dim_postal_code
         tests: [unique, not_null]
@@ -129,12 +129,12 @@ models:
               arguments:
                 to: ref('dim_statut_emprunteur')
                 field: id_dim_statut_emprunteur
-      - name: id_dim_code_postal
+      - name: id_dim_postal_code 
         tests:
           - relationships:
               arguments:
-                to: ref('id_dim_code_postal')
-                field: id_dim_code_postal
+                to: ref('dim_code_postal')
+                field: id_dim_postal_code 
 
   # ---------- Tables de fait ----------
   - name: fact_pret
