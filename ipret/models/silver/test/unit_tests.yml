@@ -1,0 +1,87 @@
+version: 2
+
+unit_tests:
+
+  # 1. Un emprunteur sans code postal doit rester dans la dimension
+  - name: test_dim_emprunteur_garde_sans_code_postal
+    model: dim_emprunteur
+    given:
+      - input: ref('snap_emprunteur')
+        rows:
+          - {id_emprunteur: 1, lb_nom_emprunteur: 'Dupont', lb_prenom_emprunteur: 'Lina', cd_postal_emprunteur: null,    cd_type_emprunteur: 'TE002', cd_statut_emprunteur: 'SE001', dbt_valid_from: '2026-01-01', dbt_valid_to: null}
+          - {id_emprunteur: 2, lb_nom_emprunteur: 'Martin', lb_prenom_emprunteur: 'Paul', cd_postal_emprunteur: '69007', cd_type_emprunteur: 'TE003', cd_statut_emprunteur: 'SE002', dbt_valid_from: '2026-01-01', dbt_valid_to: null}
+      - input: ref('stg_file_zone_geographique')
+        rows:
+          - {code_postal: '69007', code_commune_postal: '69387'}
+      - input: ref('dim_code_postal')
+        rows:
+          - {id_dim_postal_code: 10, cd_postal: '69387'}
+      - input: ref('dim_type_emprunteur')
+        rows:
+          - {id_dim_type_emprunteur: 2, cd_type_emprunteur: 'TE002'}
+          - {id_dim_type_emprunteur: 3, cd_type_emprunteur: 'TE003'}
+      - input: ref('dim_statut_emprunteur')
+        rows:
+          - {id_dim_statut_emprunteur: 1, cd_statut_emprunteur: 'SE001'}
+          - {id_dim_statut_emprunteur: 2, cd_statut_emprunteur: 'SE002'}
+    expect:
+      rows:
+        - {id_emprunteur: 1, id_dim_postal_code: null, id_dim_type_emprunteur: 2, id_dim_statut_emprunteur: 1, is_current_version: 1}
+        - {id_emprunteur: 2, id_dim_postal_code: 10,   id_dim_type_emprunteur: 3, id_dim_statut_emprunteur: 2, is_current_version: 1}
+
+  # 2. Une version fermée du snapshot n'est pas la version courante
+  - name: test_dim_emprunteur_version_courante
+    model: dim_emprunteur
+    given:
+      - input: ref('snap_emprunteur')
+        rows:
+          - {id_emprunteur: 1, cd_postal_emprunteur: null, cd_type_emprunteur: 'TE002', cd_statut_emprunteur: 'SE001', dbt_valid_from: '2026-01-01', dbt_valid_to: '2026-06-01'}
+          - {id_emprunteur: 1, cd_postal_emprunteur: null, cd_type_emprunteur: 'TE002', cd_statut_emprunteur: 'SE003', dbt_valid_from: '2026-06-01', dbt_valid_to: null}
+      - input: ref('stg_file_zone_geographique')
+        rows: []
+      - input: ref('dim_code_postal')
+        rows: []
+      - input: ref('dim_type_emprunteur')
+        rows:
+          - {id_dim_type_emprunteur: 2, cd_type_emprunteur: 'TE002'}
+      - input: ref('dim_statut_emprunteur')
+        rows:
+          - {id_dim_statut_emprunteur: 1, cd_statut_emprunteur: 'SE001'}
+          - {id_dim_statut_emprunteur: 3, cd_statut_emprunteur: 'SE003'}
+    expect:
+      rows:
+        - {id_emprunteur: 1, id_dim_statut_emprunteur: 1, is_current_version: 0}
+        - {id_emprunteur: 1, id_dim_statut_emprunteur: 3, is_current_version: 1}
+
+  # 3. Un remboursement dont le prêt n'existe pas est écarté
+  - name: test_fact_remboursement_ecarte_sans_pret
+    model: fact_remboursement
+    given:
+      - input: ref('stg_remboursement')
+        rows:
+          - {id_remboursement: 1, id_pret: 100, dt_remboursement: '2026-08-01', cd_mode_remboursement: 'MR001', mt_rembourse: 500.00, mt_capital_paye: 400.00, mt_interet_paye: 100.00}
+          - {id_remboursement: 2, id_pret: 999, dt_remboursement: '2026-08-01', cd_mode_remboursement: 'MR001', mt_rembourse: 500.00, mt_capital_paye: 400.00, mt_interet_paye: 100.00}
+      - input: ref('stg_pret')
+        rows:
+          - {id_pret: 100, id_emprunteur: 1, cd_type_pret: 'TP001', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+      - input: ref('dim_calendar')
+        rows:
+          - {id_dim_calendar: 20260801, dt_calendar: '2026-08-01'}
+      - input: ref('dim_emprunteur')
+        rows:
+          - {id_dim_emprunteur: 1, id_emprunteur: 1}
+      - input: ref('dim_type_pret')
+        rows:
+          - {id_dim_type_pret: 1, cd_type_pret: 'TP001'}
+      - input: ref('dim_statut_pret')
+        rows:
+          - {id_dim_statut_pret: 1, cd_statut_pret: 'SP001'}
+      - input: ref('dim_periodicite_remboursement')
+        rows:
+          - {id_dim_periodicite_remboursement: 1, cd_periodicite_remboursement: 'PR001'}
+      - input: ref('dim_mode_remboursement')
+        rows:
+          - {id_dim_mode_remboursement: 1, cd_mode_remboursement: 'MR001'}
+    expect:
+      rows:
+        - {id_remboursement: 1, id_dim_calendar: 20260801, id_dim_emprunteur: 1, id_dim_type_pret: 1, mt_rembourse: 500.00, nb_remboursement: 1}

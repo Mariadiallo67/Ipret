@@ -1,0 +1,237 @@
+version: 2
+
+models:
+
+  # ---------- Sous-dimensions de référence ----------
+  - name: dim_type_emprunteur
+    columns:
+      - name: id_dim_type_emprunteur
+        tests: [unique, not_null]
+      - name: cd_type_emprunteur
+        tests: [unique, not_null]
+
+  - name: dim_statut_emprunteur
+    columns:
+      - name: id_dim_statut_emprunteur
+        tests: [unique, not_null]
+      - name: cd_statut_emprunteur
+        tests: [unique, not_null]
+
+  - name: dim_type_pret
+    columns:
+      - name: id_dim_type_pret
+        tests: [unique, not_null]
+      - name: cd_type_pret
+        tests: [unique, not_null]
+
+  - name: dim_statut_pret
+    columns:
+      - name: id_dim_statut_pret
+        tests: [unique, not_null]
+      - name: cd_statut_pret
+        tests: [unique, not_null]
+
+  - name: dim_periodicite_remboursement
+    columns:
+      - name: id_dim_periodicite_remboursement
+        tests: [unique, not_null]
+      - name: cd_periodicite_remboursement
+        tests: [unique, not_null]
+
+  - name: dim_mode_remboursement
+    columns:
+      - name: id_dim_mode_remboursement
+        tests: [unique, not_null]
+      - name: cd_mode_remboursement
+        tests: [unique, not_null]
+
+  # ---------- Zone géographique et calendrier (tes modèles existants) ----------
+  - name: dim_calendar
+    columns:
+      - name: id_dim_calendar
+        tests: [unique, not_null]
+      - name: dt_calendar
+        tests: [unique, not_null]
+
+  - name: dim_country
+    columns:
+      - name: id_dim_country
+        tests: [unique, not_null]
+      - name: cd_country
+        tests: [unique, not_null]
+
+  - name: dim_region
+    columns:
+      - name: id_dim_region
+        tests: [unique, not_null]
+      - name: cd_region
+        tests: [unique, not_null]
+      - name: id_dim_country
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_country')
+                field: id_dim_country
+
+  - name: dim_department
+    columns:
+      - name: id_dim_department
+        tests: [unique, not_null]
+      - name: cd_department
+        tests: [unique, not_null]
+      - name: id_dim_region
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_region')
+                field: id_dim_region
+
+  - name: dim_postal_code
+    columns:
+      - name: id_dim_postal_code
+        tests: [unique, not_null]
+      - name: cd_postal
+        tests: [unique, not_null]
+      - name: id_dim_department
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_department')
+                field: id_dim_department
+
+  # ---------- Dimension emprunteur ----------
+  - name: dim_emprunteur
+    tests:
+       - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [id_emprunteur, valid_from]
+    columns:
+      - name: id_dim_emprunteur
+        tests: [unique, not_null]
+      - name: id_emprunteur
+        tests: [not_null]
+      - name: is_current_version
+        tests: [not_null]  
+      - name: id_dim_type_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_type_emprunteur')
+                field: id_dim_type_emprunteur
+      - name: id_dim_statut_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_statut_emprunteur')
+                field: id_dim_statut_emprunteur
+      - name: id_dim_code_postal
+        tests:
+          - relationships:
+              arguments:
+                to: ref('id_dim_code_postal')
+                field: id_dim_code_postal
+
+  # ---------- Tables de fait ----------
+  - name: fact_pret
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_pret')
+    columns:
+      - name: id_pret
+        tests: [unique, not_null]
+      - name: id_dim_calendar
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar')
+                field: id_dim_calendar
+      - name: id_dim_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_emprunteur')
+                field: id_dim_emprunteur
+      - name: id_dim_type_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_type_pret')
+                field: id_dim_type_pret
+      - name: id_dim_statut_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_statut_pret')
+                field: id_dim_statut_pret
+      - name: id_dim_periodicite_remboursement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_periodicite_remboursement')
+                field: id_dim_periodicite_remboursement
+      - name: mt_pret
+        tests: [not_null]
+
+  - name: fact_remboursement
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_remboursement')
+    columns:
+      - name: id_remboursement
+        tests: [unique, not_null]
+      - name: id_dim_calendar
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar')
+                field: id_dim_calendar
+      - name: id_dim_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_emprunteur')
+                field: id_dim_emprunteur
+      - name: id_dim_type_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_type_pret')
+                field: id_dim_type_pret
+      - name: id_dim_statut_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_statut_pret')
+                field: id_dim_statut_pret
+      - name: id_dim_periodicite_remboursement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_periodicite_remboursement')
+                field: id_dim_periodicite_remboursement
+      - name: id_dim_mode_remboursement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_mode_remboursement')
+                field: id_dim_mode_remboursement
+      - name: mt_rembourse
+        tests: [not_null]

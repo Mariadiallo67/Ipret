@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: ipret
+    schema: bronze
+    tables:
+      - name: TB_TYPE_EMPRUNTEUR
+      - name: TB_STATUT_EMPRUNTEUR
+      - name: TB_EMPRUNTEUR
+      - name: TB_TYPE_PRET
+      - name: TB_STATUT_PRET
+      - name: TB_PERIODICITE_REMBOURSEMENT
+      - name: TB_PRET
+      - name: TB_MODE_REMBOURSEMENT
+      - name: TB_REMBOURSEMENT
+
+
+     

@@ -1,0 +1,91 @@
+[0m17:00:03.410211 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000166439A6510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001664150D090>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001664632F9D0>]}
+
+
+============================== 17:00:03.433655 | e378c70b-7bc2-486c-a4f0-d0f04eea617d ==============================
+[0m17:00:03.433655 [info ] [MainThread]: Running with dbt=1.13.0-rc1
+[0m17:00:03.434644 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'None', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\MARIAMA\\.dbt', 'use_colors': 'True', 'hints_enabled': 'True', 'invocation_command': 'dbt init ipret', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'logs'}
+[0m17:00:03.474740 [debug] [MainThread]: Tracking: tracking
+[0m17:00:03.511023 [info ] [MainThread]: Creating dbt configuration folder at C:\Users\MARIAMA\.dbt
+[0m17:00:03.514371 [debug] [MainThread]: Starter project path: C:\Users\MARIAMA\Documents\DEV_DBT\IPRET_MANAGEMENT\dbt-env\Lib\site-packages\dbt\include\starter_project
+[0m17:00:03.559027 [info ] [MainThread]: Setting up your profile.
+[0m17:00:24.594348 [debug] [MainThread]: Snowflake adapter: Setting snowflake.connector to ERROR (file logging only)
+[0m17:00:24.594807 [debug] [MainThread]: Snowflake adapter: Setting botocore to ERROR (file logging only)
+[0m17:00:24.595093 [debug] [MainThread]: Snowflake adapter: Setting boto3 to ERROR (file logging only)
+[0m17:04:14.521077 [info ] [MainThread]: Profile ipret written to C:\Users\MARIAMA\.dbt\profiles.yml using target's profile_template.yml and your supplied values.
+[0m17:04:14.528843 [info ] [MainThread]: Running dbt debug to validate the project...
+[0m17:04:14.530222 [info ] [MainThread]: dbt version: 1.13.0-rc1
+[0m17:04:14.531430 [info ] [MainThread]: python version: 3.14.10
+[0m17:04:14.532227 [info ] [MainThread]: python path: C:\Users\MARIAMA\Documents\DEV_DBT\IPRET_MANAGEMENT\dbt-env\Scripts\python.exe
+[0m17:04:14.533067 [info ] [MainThread]: os info: Windows-11-10.0.26300-SP0
+[0m17:04:14.677399 [info ] [MainThread]: Using profiles dir at C:\Users\MARIAMA\.dbt
+[0m17:04:14.678078 [info ] [MainThread]: Using profiles.yml file at C:\Users\MARIAMA\.dbt\profiles.yml
+[0m17:04:14.678589 [info ] [MainThread]: Using dbt_project.yml file at C:\Users\MARIAMA\Documents\DEV_DBT\IPRET_MANAGEMENT\ipret\dbt_project.yml
+[0m17:04:14.680540 [info ] [MainThread]: adapter type: snowflake
+[0m17:04:14.681251 [info ] [MainThread]: adapter version: 1.12.5
+[0m17:04:14.816435 [info ] [MainThread]: Configuration:
+[0m17:04:14.817293 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m17:04:14.817939 [info ] [MainThread]:   dbt_project.yml file [[32mOK found and valid[0m]
+[0m17:04:14.818437 [info ] [MainThread]: Required dependencies:
+[0m17:04:14.818994 [debug] [MainThread]: Executing "git --help"
+[0m17:04:14.821638 [info ] [MainThread]:  - git [[31mERROR[0m]
+
+[0m17:04:14.822181 [info ] [MainThread]: Connection:
+[0m17:04:14.823027 [info ] [MainThread]:   account: ukwiglx-lw73276
+[0m17:04:14.824037 [info ] [MainThread]:   user: MARIADIALLO
+[0m17:04:14.824705 [info ] [MainThread]:   database: IPRET
+[0m17:04:14.825436 [info ] [MainThread]:   warehouse: COMPUTE_WH
+[0m17:04:14.826570 [info ] [MainThread]:   role: ACCOUNTADMIN
+[0m17:04:14.827664 [info ] [MainThread]:   schema: BRONZE
+[0m17:04:14.829563 [info ] [MainThread]:   authenticator: None
+[0m17:04:14.830832 [info ] [MainThread]:   oauth_client_id: None
+[0m17:04:14.831847 [info ] [MainThread]:   query_tag: None
+[0m17:04:14.833797 [info ] [MainThread]:   client_session_keep_alive: False
+[0m17:04:14.835139 [info ] [MainThread]:   host: None
+[0m17:04:14.836167 [info ] [MainThread]:   port: None
+[0m17:04:14.836655 [info ] [MainThread]:   proxy_host: None
+[0m17:04:14.837121 [info ] [MainThread]:   proxy_port: None
+[0m17:04:14.837676 [info ] [MainThread]:   protocol: None
+[0m17:04:14.838117 [info ] [MainThread]:   connect_retries: 1
+[0m17:04:14.838609 [info ] [MainThread]:   connect_timeout: None
+[0m17:04:14.838995 [info ] [MainThread]:   retry_on_database_errors: False
+[0m17:04:14.839374 [info ] [MainThread]:   retry_all: False
+[0m17:04:14.839781 [info ] [MainThread]:   insecure_mode: False
+[0m17:04:14.840152 [info ] [MainThread]:   reuse_connections: True
+[0m17:04:14.840560 [info ] [MainThread]:   s3_stage_vpce_dns_name: None
+[0m17:04:14.841022 [info ] [MainThread]:   workload_identity_provider: None
+[0m17:04:14.841663 [info ] [MainThread]:   workload_identity_entra_resource: None
+[0m17:04:14.842154 [info ] [MainThread]:   platform_detection_timeout_seconds: 0.0
+[0m17:04:14.842871 [info ] [MainThread]: Registered adapter: snowflake=1.12.5
+[0m17:04:15.044781 [debug] [MainThread]: Acquiring new snowflake connection 'debug'
+[0m17:04:15.047203 [debug] [MainThread]: Using snowflake connection "debug"
+[0m17:04:15.047517 [debug] [MainThread]: On debug: select 1 as id
+[0m17:04:15.047801 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m17:04:16.581718 [debug] [MainThread]: SQL status: SUCCESS 1 in 1.534 seconds
+[0m17:04:16.584145 [info ] [MainThread]:   Connection test: [[32mOK connection ok[0m]
+
+[0m17:04:16.585171 [info ] [MainThread]: [31m1 check failed:[0m
+[0m17:04:16.586155 [info ] [MainThread]: Error from git --help: Could not find command, ensure it is in the user's PATH and that the user has permissions to run it: "git"
+
+[0m17:04:16.586999 [info ] [MainThread]: Your new dbt project "ipret" was created!
+Initialized new project in C:\Users\MARIAMA\Documents\DEV_DBT\IPRET_MANAGEMENT\ipret\ipret
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m17:04:16.587742 [info ] [MainThread]: [31mYour profile may need adjustments. You can find the logs of `dbt debug` above[0m
+[0m17:04:16.589385 [debug] [MainThread]: Command `dbt init` succeeded at 17:04:16.589196 after 253.34 seconds
+[0m17:04:16.589826 [debug] [MainThread]: Connection 'debug' was left open.
+[0m17:04:16.590205 [debug] [MainThread]: On debug: Close
+[0m17:04:16.688220 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000166461B3490>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016647357410>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016647210AF0>]}
+[0m17:04:16.689392 [debug] [MainThread]: Flushing usage events
+[0m17:04:17.135806 [debug] [MainThread]: An error was encountered while trying to flush usage events

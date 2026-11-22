@@ -1,0 +1,45 @@
+version: 2
+
+models:
+
+  - name: gold_dim_emprunteur
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [id_emprunteur, valid_from]
+    columns:
+      - name: id_dim_emprunteur
+        tests: [unique, not_null]
+      - name: id_emprunteur
+        tests: [ not_null]
+      - name: cd_type_emprunteur
+        tests: [not_null]
+      - name: cd_statut_emprunteur
+        tests: [not_null]
+
+  - name: gold_dim_type_pret
+    columns:
+      - name: id_dim_type_pret
+        tests: [unique, not_null]
+
+  - name: gold_dim_statut_pret
+    columns:
+      - name: id_dim_statut_pret
+        tests: [unique, not_null]
+
+  - name: gold_dim_periodicite_remboursement
+    columns:
+      - name: id_dim_periodicite_remboursement
+        tests: [unique, not_null]
+
+  - name: gold_dim_mode_remboursement
+    columns:
+      - name: id_dim_mode_remboursement
+        tests: [unique, not_null]
+
+  - name: gold_dim_calendar
+    columns:
+      - name: id_dim_calendar
+        tests: [unique, not_null]
+      - name: dt_calendar
+        tests: [unique, not_null]

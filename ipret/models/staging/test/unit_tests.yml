@@ -1,0 +1,46 @@
+version: 2
+
+unit_tests:
+
+  # 1. Formats de dates, montants et taux de TB_PRET
+  - name: test_pret_nettoyage_formats
+    model: stg_pret_deduplicated
+    given:
+      - input: source('bronze', 'TB_PRET')
+        rows:
+          - {id_pret: '1', dt_pret: '06/01/2016', mt_pret: '444 000,00',  tx_interet_pret: '0,73',   nb_duree_remboursement: '120', cd_type_pret: 'TP001', id_emprunteur: '10', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+          - {id_pret: '2', dt_pret: '2016-01-06', mt_pret: '17600.00',     tx_interet_pret: '0.73',   nb_duree_remboursement: '120', cd_type_pret: 'TP001', id_emprunteur: '10', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+          - {id_pret: '3', dt_pret: '09.02.2016', mt_pret: '8 700,00 €',   tx_interet_pret: '0,91 %', nb_duree_remboursement: '120', cd_type_pret: 'TP001', id_emprunteur: '10', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+          - {id_pret: '4', dt_pret: '07/11/21',   mt_pret: '5000,00',      tx_interet_pret: '2,31',   nb_duree_remboursement: '120', cd_type_pret: 'TP001', id_emprunteur: '10', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+    expect:
+      rows:
+        - {id_pret: 1, dt_pret: 2016-01-06, mt_pret: 444000.00, tx_interet_pret: 0.73, rejected_reason: null}
+        - {id_pret: 2, dt_pret: 2016-01-06, mt_pret: 17600.00,  tx_interet_pret: 0.73, rejected_reason: null}
+        - {id_pret: 3, dt_pret: 2016-02-09, mt_pret: 8700.00,   tx_interet_pret: 0.91, rejected_reason: null}
+        - {id_pret: 4, dt_pret: 2021-11-07, mt_pret: 5000.00,   tx_interet_pret: 2.31, rejected_reason: null}
+
+  # 2. Un doublon exact doit être rejeté
+  - name: test_pret_doublon_rejete
+    model: stg_pret_deduplicated
+    given:
+      - input: source('bronze', 'TB_PRET')
+        rows:
+          - {id_pret: '1', dt_pret: '06/01/2016', mt_pret: '10000,00', tx_interet_pret: '2,5', nb_duree_remboursement: '120', cd_type_pret: 'TP001', id_emprunteur: '10', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+          - {id_pret: '1', dt_pret: '06/01/2016', mt_pret: '10000,00', tx_interet_pret: '2,5', nb_duree_remboursement: '120', cd_type_pret: 'TP001', id_emprunteur: '10', cd_statut_pret: 'SP001', cd_periodicite_remboursement: 'PR001'}
+    expect:
+      rows:
+        - {id_pret: 1, rn: 1, rejected_reason: null}
+        - {id_pret: 1, rn: 2, rejected_reason: 'duplicate key'}
+
+  # 3. Valeurs bidon et casse dans TB_EMPRUNTEUR
+  - name: test_emprunteur_valeurs_bidon
+    model: stg_emprunteur_deduplicated
+    given:
+      - input: source('bronze', 'TB_EMPRUNTEUR')
+        rows:
+          - {id_emprunteur: '1', lb_civilite_emprunteur: '-',  lb_nom_emprunteur: "  Guyomarc'h ", lb_prenom_emprunteur: ' jean-pierre ', dt_naissance_emprunteur: '22/08/1997', lb_email_emprunteur: 'N/A',           cd_postal_emprunteur: '-',     cd_type_emprunteur: 'te002 ', cd_statut_emprunteur: 'SE002'}
+          - {id_emprunteur: '2', lb_civilite_emprunteur: 'Mme', lb_nom_emprunteur: 'Dupont', lb_prenom_emprunteur: 'LINA', dt_naissance_emprunteur: '11/12/1958', lb_email_emprunteur: ' Lina@SFR.fr ', cd_postal_emprunteur: '69007', cd_type_emprunteur: 'TE003',  cd_statut_emprunteur: 'SE001'}
+    expect:
+      rows:
+        - {id_emprunteur: 1, lb_civilite_emprunteur: null,  lb_nom_emprunteur: "Guyomarc'h", lb_prenom_emprunteur: 'Jean-Pierre', lb_email_emprunteur: null,           cd_postal_emprunteur: null,    cd_type_emprunteur: 'TE002'}
+        - {id_emprunteur: 2, lb_civilite_emprunteur: 'Mme', lb_nom_emprunteur: 'Dupont',     lb_prenom_emprunteur: 'Lina',        lb_email_emprunteur: 'lina@sfr.fr', cd_postal_emprunteur: '69007', cd_type_emprunteur: 'TE003'}

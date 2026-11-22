@@ -1,0 +1,176 @@
+version: 2
+
+models:
+
+  # ---------- Tables de référence ----------
+  - name: stg_type_emprunteur
+    columns:
+      - name: cd_type_emprunteur
+        tests: [unique, not_null]
+      - name: lb_type_emprunteur
+        tests: [not_null]
+
+  - name: stg_statut_emprunteur
+    columns:
+      - name: cd_statut_emprunteur
+        tests: [unique, not_null]
+      - name: lb_statut_emprunteur
+        tests: [not_null]
+
+  - name: stg_type_pret
+    columns:
+      - name: cd_type_pret
+        tests: [unique, not_null]
+      - name: lb_type_pret
+        tests: [not_null]
+
+  - name: stg_statut_pret
+    columns:
+      - name: cd_statut_pret
+        tests: [unique, not_null]
+      - name: lb_statut_pret
+        tests: [not_null]
+
+  - name: stg_periodicite_remboursement
+    columns:
+      - name: cd_periodicite_remboursement
+        tests: [unique, not_null]
+      - name: lb_periodicite_remboursement
+        tests: [not_null]
+
+  - name: stg_mode_remboursement
+    columns:
+      - name: cd_mode_remboursement
+        tests: [unique, not_null]
+      - name: lb_mode_remboursement
+        tests: [not_null]
+
+  # ---------- Emprunteur ----------
+  - name: stg_emprunteur
+    columns:
+      - name: id_emprunteur
+        tests: [unique, not_null]
+      - name: lb_civilite_emprunteur
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['M.', 'Mme']
+      - name: lb_nom_emprunteur
+        tests: [not_null]
+      - name: lb_prenom_emprunteur
+        tests: [not_null]
+      - name: dt_naissance_emprunteur
+        tests: [not_null]
+      - name: cd_type_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_type_emprunteur')
+                  field: cd_type_emprunteur
+      - name: cd_statut_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_statut_emprunteur')
+                  field: cd_statut_emprunteur
+
+  # ---------- Prêt ----------
+  - name: stg_pret
+    columns:
+      - name: id_pret
+        tests: [unique, not_null]
+      - name: dt_pret
+        tests: [not_null]
+      - name: mt_pret
+        tests: [not_null]
+      - name: nb_duree_remboursement
+        tests: [not_null]
+      - name: tx_interet_pret
+        tests: [not_null]
+      - name: id_emprunteur
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_emprunteur')
+                  field: id_emprunteur
+      - name: cd_type_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_type_pret')
+                  field: cd_type_pret
+      - name: cd_statut_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_statut_pret')
+                  field: cd_statut_pret
+      - name: cd_periodicite_remboursement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                 to: ref('stg_periodicite_remboursement')
+                 field: cd_periodicite_remboursement
+
+  # ---------- Remboursement ----------
+  - name: stg_rembousement
+    columns:
+      - name: id_remboursement
+        tests: [unique, not_null]
+      - name: dt_remboursement
+        tests: [not_null]
+      - name: mt_rembourse
+        tests: [not_null]
+      - name: mt_capital_paye
+        tests: [not_null]
+      - name: mt_interet_paye
+        tests: [not_null]
+      - name: id_pret
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_pret')
+                  field: id_pret
+      - name: cd_mode_remboursement
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_mode_remboursement')
+                  field: cd_mode_remboursement
+
+
+  # ---------- Zone géographique ----------
+  - name: stg_file_zone_geographique
+    columns:
+      - name: code_commune_postal
+        tests: [unique, not_null]
+      - name: postal_commune_name
+        tests: [not_null]
+      - name: code_postal
+        tests: [not_null]
+      - name: full_commune_name
+        tests: [not_null]
+      - name: code_department
+        tests: [not_null]
+      - name: department_name
+        tests: [not_null]
+      - name: code_region
+        tests: [not_null]
+      - name: region_name
+        tests: [not_null]
+  - name: stg_file_zone_geographique_rejected
+    columns:
+      - name: rejection_id
+        tests: [unique, not_null]
+      - name: rejected_reason
+        tests: [not_null]      
+
+             
